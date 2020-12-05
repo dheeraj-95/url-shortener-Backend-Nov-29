@@ -286,37 +286,7 @@ app.post("/login", async (req, res) => {
     })
 });
 
-app.get('/checklogin', function (req, res) {
-    const cooked = req.cookies
-    console.log(cooked.jwt)
-    jwt.verify(cooked.jwt, process.env.JWT_SECRET, function (err, decoded) {
-        if (err) return res.json({
-            type_: 'warning',
-            message: 'session expired'
-        });
-        if (decoded) {
-            return res.json({
-                type_: 'success',
-                message: 'Login Successful..'
-            });
-        } else {
-            return res.json({
-                type_: 'warning',
-                message: 'Invalid Login..'
-            });
-        }
-    });
-});
-
-app.get("/logout", (req, res) => {
-    res.clearCookie('jwt').json({
-        type_: 'success',
-        message: 'Logging Out...'
-    })
-});
-
-
-app.post("/resetpassword", cors(), async (req, res) => {
+app.post("/resetpassword",  async (req, res) => {
     const {
         email
     } = req.body
@@ -382,7 +352,7 @@ app.post("/resetpassword", cors(), async (req, res) => {
     })
 });
 
-app.post('/newpassword', cors(), async (req, res) => {
+app.post('/newpassword', async (req, res) => {
     const {
         password,
         email
@@ -451,82 +421,6 @@ app.post('/newpassword', cors(), async (req, res) => {
 
 })
 
-
-app.get("/auth0/:token", (req, res) => {
-    const token = req.params.token
-    jwt.verify(token, process.env.JWT_SECRET, async function (err, decoded) {
-        if (decoded) {
-            let client = await mongoClient.connect(url, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            });
-            let db = client.db("urlshortner"); 
-            let user = db.collection("users"); 
-            user.findOneAndUpdate({
-                email: decoded.email
-            }, {
-                $set: {
-                    confirmed: true
-                }
-            }, (err, result) => {
-                if (err) {
-                    return res.json({
-                        message: err,
-                        type_: 'danger'
-                    });
-                }
-                if (result) {
-                    res.redirect('https://zen-knuth-a6939d.netlify.app/auth/newpassword');
-                }
-            });
-        }
-        if (err) {
-            return res.json({
-                message: err,
-                type_: 'danger'
-            }); 
-        }
-    });
-});
-
-
-app.get("/auth/:token", (req, res) => {
-    const token = req.params.token
-    jwt.verify(token, process.env.JWT_SECRET, async function (err, decoded) {
-        if (decoded) {
-            let client = await mongoClient.connect(url, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            });
-            let db = client.db("urlshortner"); 
-            let user = db.collection("users"); 
-            user.findOneAndUpdate({
-                email: decoded.email
-            }, {
-                $set: {
-                    confirmed: true 
-                }
-            }, (err, result) => {
-                if (err) {
-                    return res.json({
-                        message: err,
-                        type_: 'danger'
-                    });
-                }
-                if (result) {
-                    res.redirect('https://zen-knuth-a6939d.netlify.app/Auth/confirmation.html');
-                }
-            });
-        }
-        if (err) {
-            return res.json({
-                message: err,
-                type_: 'danger'
-            }); 
-        }
-    });
-});
-
 app.post("/bitlyFy", async (req, res) => {
     const {
         req_by,
@@ -587,6 +481,80 @@ app.post("/MyLinks", async (req, res) => {
     });
 });
 
+app.get("/auth0/:token", (req, res) => {
+    const token = req.params.token
+    jwt.verify(token, process.env.JWT_SECRET, async function (err, decoded) {
+        if (decoded) {
+            let client = await mongoClient.connect(url, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
+            let db = client.db("urlshortner"); 
+            let user = db.collection("users"); 
+            user.findOneAndUpdate({
+                email: decoded.email
+            }, {
+                $set: {
+                    confirmed: true
+                }
+            }, (err, result) => {
+                if (err) {
+                    return res.json({
+                        message: err,
+                        type_: 'danger'
+                    });
+                }
+                if (result) {
+                    res.redirect('https://zen-knuth-a6939d.netlify.app/auth/newpassword');
+                }
+            });
+        }
+        if (err) {
+            return res.json({
+                message: err,
+                type_: 'danger'
+            }); 
+        }
+    });
+});
+
+app.get("/auth/:token", (req, res) => {
+    const token = req.params.token
+    jwt.verify(token, process.env.JWT_SECRET, async function (err, decoded) {
+        if (decoded) {
+            let client = await mongoClient.connect(url, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            });
+            let db = client.db("urlshortner"); 
+            let user = db.collection("users"); 
+            user.findOneAndUpdate({
+                email: decoded.email
+            }, {
+                $set: {
+                    confirmed: true 
+                }
+            }, (err, result) => {
+                if (err) {
+                    return res.json({
+                        message: err,
+                        type_: 'danger'
+                    });
+                }
+                if (result) {
+                    res.redirect('https://zen-knuth-a6939d.netlify.app/Auth/confirmation.html');
+                }
+            });
+        }
+        if (err) {
+            return res.json({
+                message: err,
+                type_: 'danger'
+            }); 
+        }
+    });
+});
+
 app.get("/fy/:token", async (req, res) => {
     const {
         token
@@ -605,6 +573,36 @@ app.get("/fy/:token", async (req, res) => {
         }
     });
 });
+
+app.get('/checklogin', function (req, res) {
+    const cooked = req.cookies
+    console.log(cooked.jwt)
+    jwt.verify(cooked.jwt, process.env.JWT_SECRET, function (err, decoded) {
+        if (err) return res.json({
+            type_: 'warning',
+            message: 'session expired'
+        });
+        if (decoded) {
+            return res.json({
+                type_: 'success',
+                message: 'Login Successful..'
+            });
+        } else {
+            return res.json({
+                type_: 'warning',
+                message: 'Invalid Login..'
+            });
+        }
+    });
+});
+
+app.get("/logout", (req, res) => {
+    res.clearCookie('jwt').json({
+        type_: 'success',
+        message: 'Logging Out...'
+    })
+});
+
 
 app.listen(process.env.PORT || 8080, () => {
     console.log('Server is live.. 🔥')
