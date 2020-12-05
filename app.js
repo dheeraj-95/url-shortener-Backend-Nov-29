@@ -527,7 +527,7 @@ app.get("/auth/:token", (req, res) => {
     });
 });
 
-app.post("/bitly", async (req, res) => {
+app.post("/bitlyFy", async (req, res) => {
     const {
         req_by,
         longLink
