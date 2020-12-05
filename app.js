@@ -188,11 +188,11 @@ app.post("/register", async (req, res) => {
                             email: email
                         }, process.env.JWT_SECRET);
 
-                        let url = `https://nimmy-urlshortner.herokuapp.com/auth/${emailToken}`
+                        let url = `https://urlshortener-backend-heroku.herokuapp.com/auth/${emailToken}`
                         let name = `${email.split('@')[0]}`
                         
                         var mailOptions = {
-                            from: '"Hello !!" <s.nidafathima@gmail.com>',
+                            from: process.env.EMAIL,
                             to: `${email}`,
                             subject: 'Account Confirmation Link',
                             html: `Hello ${name} , Here's your Account verification link: <br> <a style="color:green" href="${url}">Click Here To Confirm</a> <br> Link expires in an hour...`
@@ -348,11 +348,11 @@ app.post("/resetpassword", cors(), async (req, res) => {
                     confirmed: false
                 }
             });
-            let url = `https://nimmy-urlshortner.herokuapp.com/auth0/${emailToken}`
+            let url = `https://urlshortener-backend-heroku.herokuapp.com/auth0/${emailToken}`
             let name = `${email.split('@')[0]}`
 
             var mailOptions = {
-                from: '"Hello !!" s.nidafathima@gmail.com',
+                from: process.env.EMAIL,
                 to: `${email}`,
                 subject: 'Password Reset Link',
                 html: `Hello ${name} ,<br> Here's your password reset link: <a style="color:green" href="${url}">Click Here To Reset</a> Link expires in 10 minutes...`
@@ -476,7 +476,7 @@ app.get("/auth0/:token", (req, res) => {
                     });
                 }
                 if (result) {
-                    res.redirect('https://nimmy-urlshortner.netlify.app/auth/newpassword');
+                    res.redirect('https://zen-knuth-a6939d.netlify.app/auth/newpassword');
                 }
             });
         }
@@ -514,7 +514,7 @@ app.get("/auth/:token", (req, res) => {
                     });
                 }
                 if (result) {
-                    res.redirect('https://nimmy-urlshortner.netlify.app/Auth/confirmation.html');
+                    res.redirect('https://zen-knuth-a6939d.netlify.app/Auth/confirmation.html');
                 }
             });
         }
@@ -527,7 +527,7 @@ app.get("/auth/:token", (req, res) => {
     });
 });
 
-app.post("/nimmyFy", async (req, res) => {
+app.post("/bitly", async (req, res) => {
     const {
         req_by,
         longLink
@@ -554,7 +554,7 @@ app.post("/nimmyFy", async (req, res) => {
             });
         }
         if (result) {
-            let shortlink = `https://nimmy-urlshortner.herokuapp.com/fy/${token}`
+            let shortlink = `https://urlshortener-backend-heroku.herokuapp.com/fy/${token}`
             return res.json({
                 type_: 'success',
                 message: 'Yippee It Works',
@@ -606,6 +606,6 @@ app.get("/fy/:token", async (req, res) => {
     });
 });
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 8080, () => {
     console.log('Server is live.. 🔥')
 })
